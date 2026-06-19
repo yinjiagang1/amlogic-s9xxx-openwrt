@@ -12,7 +12,7 @@ on:
       source_branch:
         description: "Select the source branch"
         required: false
-        default: "all"
+        default: "lede_master"
         type: choice
         options:
           - all
@@ -22,7 +22,7 @@ on:
       openwrt_board:
         description: "Select device board"
         required: false
-        default: "all"
+        default: "s912-b1s"
         type: choice
         options:
           - all
@@ -199,6 +199,7 @@ on:
           - s905x3-x96air-gb
           - s905x3-x96max
           - s912
+          - s912-b1s
           - s912-h96pro-plus
           - s912-m8s-pro
           - s912-nexbox-a1
@@ -427,7 +428,6 @@ jobs:
           # Clone the source code repository
           git clone -q --single-branch --depth=1 --branch=${REPO_BRANCH} ${REPO_URL} openwrt
           ln -sf /builder/openwrt ${{ github.workspace }}/openwrt
-          ln -sf /builder/openwrt /home/runner/work/_actions/ophub/amlogic-s9xxx-openwrt/main/openwrt
 
           # Export build metadata
           echo "build_tag=OpenWrt_${{ matrix.branch }}_${{ inputs.openwrt_storage }}_$(date +"%Y.%m")" >> ${GITHUB_ENV}
@@ -522,7 +522,7 @@ jobs:
           echo "status=success" >> ${GITHUB_OUTPUT}
 
       - name: Upload OpenWrt rootfs to Release
-        uses: ophub/upload-to-releases@main
+        uses: ./
         if: ${{ steps.clean.outputs.status == 'success' && !cancelled() }}
         with:
           tag: ${{ env.build_tag }}
